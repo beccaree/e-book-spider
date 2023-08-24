@@ -1,5 +1,5 @@
 # e-book-spider
-crawler scripts for creating books for my eReader
+crawler scripts to create books for my eReader
 
 ## 小說狂人
 
