@@ -5,6 +5,8 @@ from tqdm import tqdm
 from ebooklib import epub
 import uuid
 
+# epublib docs: https://docs.sourcefabric.org/projects/ebooklib/en/latest/tutorial.html#introduction
+
 def extract_chapter(chapter_url):
     cPage = requests.get('https:' + chapter_url)
     cPage.raise_for_status()
@@ -29,6 +31,7 @@ soup = BeautifulSoup(page.content, 'html.parser')
 infoSection = soup.find('div', class_='info')
 title = infoSection.find('span', class_='title').text.strip()
 author = infoSection.find('span', class_='author').find('a').text.strip()
+description = soup.find('div', class_='description').text.strip()
 print('%sby%s' % (title, author))
 
 # create epub book
@@ -37,6 +40,7 @@ book.set_identifier('czbooks_%s' % uuid.uuid4())
 book.set_title(title)
 book.set_language('zh')
 book.add_author(author)
+book.add_metadata('DC', 'description', description)
 
 # read all chapters from main page
 chapterList = soup.find('ul', id='chapter-list')
@@ -57,7 +61,7 @@ for i, c in enumerate(tqdm(chapterList.find_all('a', href=True))):
 
 # Set the TOC
 book.toc = (
-    epub.Link("chapter_0.xhtml", "Introduction", "intro"),
+    epub.Link("chapter_0.xhtml", "Chapter 0", "chapter0"),
     (epub.Section('Chapters'), chapters[1::])
 )
 # add navigation files
